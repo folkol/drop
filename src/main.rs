@@ -4,7 +4,7 @@ use std::io::BufWriter;
 
 use clap::Parser;
 
-pub type Error = Box<dyn std::error::Error + Send + Sync>;
+pub type Error = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Parser)]
@@ -18,13 +18,10 @@ struct Args {
 pub fn main() -> Result<()> {
     let args = Args::parse();
     let mut out = BufWriter::new(io::stdout().lock());
-
     if args.tail {
         let mut queue = VecDeque::<String>::new();
-        let lines = io::stdin().lock().lines();
-        for line in lines.take(args.n) {
-            queue.push_back(line?)
-        }
+        let lines = io::stdin().lines();
+        queue.extend(lines.take(args.n).filter_map(|line| line.ok()));
         for line in io::stdin().lines() {
             queue.push_back(line?);
             let output = queue.pop_front().expect("Expected line in queue");
@@ -35,6 +32,5 @@ pub fn main() -> Result<()> {
             writeln!(out, "{}", line?)?
         }
     };
-    out.flush()?;
     Ok(())
 }
