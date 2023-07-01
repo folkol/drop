@@ -31,8 +31,7 @@ fn drop_tail(num_lines: usize, out: &mut BufWriter<StdoutLock>) -> Result<()> {
     let mut queue = VecDeque::from_iter(lines);
     for line in io::stdin().lines() {
         queue.push_back(line?);
-        let output = queue.pop_front().expect("Expected line in queue");
-        writeln!(out, "{}", output)?
+        writeln!(out, "{}", queue.pop_front().unwrap())?
     }
     Ok(())
 }
