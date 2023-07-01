@@ -1,7 +1,6 @@
-use std::{io, io::prelude::*};
 use std::collections::VecDeque;
 use std::io::{BufWriter, StdoutLock};
-use std::result::Result as is;
+use std::{io, io::prelude::*};
 
 use clap::Parser;
 
