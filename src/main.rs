@@ -18,7 +18,7 @@ struct Args {
 }
 
 fn drop_head(num_lines: usize, out: &mut BufWriter<StdoutLock>) -> Result<()> {
-    let _ = io::stdin().lines().skip(num_lines);
+    io::stdin().lines().take(num_lines).last();
     let _ = io::copy(&mut io::stdin().lock(), out);
     Ok(())
 }
@@ -37,7 +37,15 @@ fn drop_tail(num_lines: usize, out: &mut BufWriter<StdoutLock>) -> Result<()> {
     Ok(())
 }
 
+#[cfg(unix)]
+fn reset_sigpipe() {
+    unsafe {
+        libc::signal(libc::SIGPIPE, libc::SIG_DFL);
+    }
+}
+
 pub fn main() -> Result<()> {
+    reset_sigpipe();
     let args = Args::parse();
     let mut out = BufWriter::new(io::stdout().lock());
     if args.tail {
