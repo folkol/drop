@@ -1,6 +1,6 @@
+use std::{io, io::prelude::*};
 use std::collections::VecDeque;
 use std::io::{BufWriter, StdoutLock};
-use std::{io, io::prelude::*};
 
 use clap::Parser;
 
@@ -17,20 +17,22 @@ struct Args {
     n: usize,
 }
 
-fn drop_head(num_lines: usize, out: &mut BufWriter<StdoutLock>) -> std::io::Result<()> {
+fn drop_head(num_lines: usize, out: &mut BufWriter<StdoutLock>) -> Result<()> {
     let _ = io::stdin().lines().skip(num_lines);
     let _ = io::copy(&mut io::stdin().lock(), out);
     Ok(())
 }
 
 fn drop_tail(num_lines: usize, out: &mut BufWriter<StdoutLock>) -> Result<()> {
-    let mut queue = VecDeque::<String>::new();
-    let lines = io::stdin().lines();
-    queue.extend(lines.take(num_lines).filter_map(|result| result.ok()));
+    let lines = io::stdin()
+        .lines()
+        .take(num_lines)
+        .filter_map(std::result::Result::ok);
+    let mut queue = VecDeque::from_iter(lines);
     for line in io::stdin().lines() {
         queue.push_back(line?);
         let output = queue.pop_front().expect("Expected line in queue");
-        writeln!(out, "{}", output)?;
+        writeln!(out, "{}", output)?
     }
     Ok(())
 }
