@@ -13,7 +13,7 @@ struct Args {
     debug: bool,
     #[clap(default_value_t = false, short, long)]
     tail: bool,
-    #[clap(default_value_t = 10)]
+    #[clap(default_value_t = 1)]
     n: usize,
 }
 
