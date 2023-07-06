@@ -1,0 +1,8 @@
+# Drop
+
+Drop lines from the beginning or the end of stdin. Default to one line.
+
+## Install
+
+cargo build -r
+sudo cp target/release/drop /usr/local/bin/
